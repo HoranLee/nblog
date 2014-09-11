@@ -2,7 +2,9 @@
 /**
  * Module dependencies.
  */
-
+var fs = require('fs');
+var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
 var express = require('express');
 var routes = require('./routes');
 var http = require('http');
@@ -20,6 +22,7 @@ app.set('view engine', 'ejs');
 app.use(flash());
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.looger({stream: accessLog}));
 //app.use(express.bodyParser({keepExtensions: true, uploadDir: './pulic/images'}));
 app.use(express.bodyParser({keepExtensions: true}));
 app.use(express.methodOverride());
@@ -37,6 +40,11 @@ app.use(express.session({
 
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(err, req, res, next){
+    var meta = '[' + new Date() + ']' + req.url + '\n';
+    errorLog.write(meta + err.stack + '\n');
+    next();
+});
 
 // development only
 if ('development' == app.get('env')) {
