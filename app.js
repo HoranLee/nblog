@@ -14,6 +14,9 @@ var settings = require('./settings');
 var flash = require('connect-flash');
 
 var app = express();
+var passport = require('passport'),
+    GithubStrategy = require('passport-github').Strategy;
+
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -38,6 +41,7 @@ app.use(express.session({
     })
 }));
 
+app.use(passport.initialize());//初始化passport
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(err, req, res, next){
@@ -45,6 +49,14 @@ app.use(function(err, req, res, next){
     errorLog.write(meta + err.stack + '\n');
     next();
 });
+
+passport.use(new GithubStrategy({
+    clientID: '39e2a6141bc8a2d9ac10',
+    clientSecret: '8bb5264fdc9f093b957182d78a9ae569275cb179',
+    callbackURL: 'http://localhost:3000/login/github/callback'
+}, function(accessToken, refreshToken, profile, done){
+    done(null, profile);
+}));
 
 // development only
 if ('development' == app.get('env')) {
