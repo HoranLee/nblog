@@ -365,6 +365,29 @@ module.exports = function(app){
         });
     });
 
+    app.get('/reprint/:name/:day/:title', checkLogin);
+    app.get('/reprint/:name/:day/:title', function(req, res){
+        Post.edit(req.params.name, req.params.day, req.params.title, function(err, post){
+            if(err){
+                req.flash('error', err);
+                return res.redirect('back');
+            }
+            var currentUser = req.session.user,
+                reprint_from = {name: post.name, day: post.time.day, title: post.title},
+                reptint_to = {name: currentUser.name, head: currentUser.head};
+
+            Post.reprint(reprint_from, reptint_to, function(err, post){
+                if(err){
+                    req.flash('error', err);
+                    return res.redirect('back');
+                }
+                req.flash('success', '转载成功！');
+                var url = '/u/' + post.name + '/' + post.time.day + '/' + post.title;
+                res.redirect(url);
+            });
+        });
+    });
+
     app.use(function(req, res){
         res.render('404');
     });
