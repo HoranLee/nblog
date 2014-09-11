@@ -32,7 +32,8 @@ Post.prototype.save = function(callback){
         title: this.title,
         tags: this.tags,
         post: this.post,
-        comments: []
+        comments: [],
+        pv: 0
     }
     //打开数据库
     mongodb.open(function(err, db){
@@ -92,7 +93,6 @@ Post.getTen = function(name, page, callback) {
                     }
                     //解析 markdown 为 html
                     docs.forEach(function (doc) {
-                        console.log('****' + JSON.stringify(doc));
                         doc.post = markdown.toHTML(doc.post);
                     });
                     callback(null, docs, total);
@@ -121,20 +121,51 @@ Post.getOne = function(name, day, title, callback){
                 'time.day': day,
                 'title': title
             }, function(err, doc){
-                mongodb.close();
                 if(err){
+                    mongodb.close();
                     return callback(err);
                 }
-                //解析markdown为html
-                if(doc){
-                    doc.post = markdown.toHTML(doc.post);
 
+                if(doc){
+                    console.log('pv---------------' + doc.pv);
+                    if(typeof doc.pv != 'undefined'){
+                        //每访问1次，pv值增加1
+                        collection.update({
+                            'name': name,
+                            'time.day': day,
+                            'title': title
+                        }, {
+                            $inc: {'pv': 1}
+                        }, function(err){
+                            console.log('err' + err);
+                            mongodb.close();
+                            if(err){
+                                return callback(err);
+                            }
+                        });
+                    } else {
+                        collection.update({
+                            'name': name,
+                            'time.day': day,
+                            'title': title
+                        }, {
+                            $set: {pv: parseInt('1')}
+                        }, function(err){
+                            console.log('err' + err);
+                            mongodb.close();
+                            if(err){
+                                return callback(err);
+                            }
+                        });
+                    }
+
+                    //解析markdown为html
+                    doc.post = markdown.toHTML(doc.post);
                     typeof doc.comments != 'undefined' && doc.comments.length > 0 && doc.comments.forEach(function(comment){
                         comment.content = markdown.toHTML(comment.content);
                     });
+                    callback(null, doc);//返回查询的一篇文章
                 }
-
-                callback(null, doc);//返回查询的一篇文章
             });
         });
     });

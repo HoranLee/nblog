@@ -14,6 +14,10 @@
     <% }%>
 </p>
 <p><%- post.post%></p>
-<% }) %>
+<% var pv = 0,commentcount = 0;%>
+<% if (typeof post.pv != 'undefined'){ pv = post.pv;} %>
+<% if (typeof post.comments != 'undefined') { commentcount = post.comments.length} %>
+<p class="info">阅读：<%= pv %> | 评论： <%= commentcount %></p>
+<% })%>
 <%- include paging%>
 <%- include footer%>
