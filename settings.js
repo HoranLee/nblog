@@ -3,6 +3,5 @@
  */
 module.exports = {
     cookieecret: 'myblog',
-    db: 'blog',
-    host: 'localhost'
+    url: 'mongodb://mars:5180526@kahana.mongohq.com:10041/blog'
 }
