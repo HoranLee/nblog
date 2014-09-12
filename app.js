@@ -50,7 +50,7 @@ app.use(function(err, req, res, next){
 passport.use(new GithubStrategy({
     clientID: '39e2a6141bc8a2d9ac10',
     clientSecret: '8bb5264fdc9f093b957182d78a9ae569275cb179',
-    callbackURL: '/login/github/callback'
+    callbackURL: 'http://marsblog.herokuapp.com/login/github/callback'
 }, function(accessToken, refreshToken, profile, done){
     done(null, profile);
 }));
