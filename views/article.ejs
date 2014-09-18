@@ -41,7 +41,7 @@
 <p><%- post.post%></p>
 <p class="info">
     阅读：<%= post.pv %> |
-    评论：<%= post.comments.length %> |
+    评论：<span class="ds-thread-count" data-thread-key="<%= post._id%>"></span> |
     转载：
     <% if (post.reprint_info.reprint_to) { %>
     <%= post.reprint_info.reprint_to.length %>
