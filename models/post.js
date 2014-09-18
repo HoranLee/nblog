@@ -37,7 +37,6 @@ Post.prototype.save = function(callback){
         title: this.title,
         tags: this.tags,
         post: this.post,
-        comments: 0,
         reprint_info: {},
         pv: 0
     }
@@ -167,9 +166,6 @@ Post.getOne = function(name, day, title, callback){
 
                     //解析markdown为html
                     doc.post = markdown.toHTML(doc.post);
-                    typeof doc.comments != 'undefined' && doc.comments.length > 0 && doc.comments.forEach(function(comment){
-                        comment.content = markdown.toHTML(comment.content);
-                    });
                     callback(null, doc);//返回查询的一篇文章
                 }
             });
@@ -462,7 +458,6 @@ Post.reprint = function(reprint_from, reprint_to, callback){
                 doc.head = reprint_to.head;
                 doc.time = time;
                 doc.title = (doc.title.search(/[转载]/) > -1) ? doc.title : '[转载]' + doc.title;
-                doc.comments = [];
                 doc.reprint_info = {'reprint_from': reprint_from};
                 doc.pv = 0;
 

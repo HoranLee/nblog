@@ -22,7 +22,7 @@
 <% if (typeof post.pv != 'undefined'){ pv = post.pv;} %>
 <p class="info">
     阅读：<%= pv %> |
-    评论： <span class="ds-thread-count" data-thread-key="<%= post._id%>"></span> |
+    评论： <span class="ds-thread-count" data-thread-key="<%= post._id%>" data-count-type="comments"></span> |
     转载：
     <% if(post.reprint_info.reprint_to ){ %>
         <%= post.reprint_info.reprint_to.length %>
